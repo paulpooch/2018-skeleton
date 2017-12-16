@@ -11,6 +11,7 @@ const Index = () => (
     </head>
     <body>
       <div id={ config.REACT_ROOT_ELEMENT } style={{ minHeight: '100vh' }} />
+      <script defer src="/dist/js/entry.js" charSet="UTF-8" />
     </body>
   </html>
 );

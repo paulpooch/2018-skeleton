@@ -17,6 +17,7 @@ const express = new Express();
 const server = new http.Server(express);
 
 try {
+  fs.emptyDirSync(config.DIRECTORIES.DIST);
   const webpackCompiler = webpack(webpackConfig);
   webpackCompiler.run((error, stats) => {
     if (error) {
@@ -35,6 +36,8 @@ try {
   console.error(error);
   throw error;
 }
+
+express.use('/dist', Express.static(config.DIRECTORIES.DIST));
 
 express.get('*', (req, res, next) => {
   const props = {};

@@ -1,3 +1,4 @@
+const config = require('./config');
 const fs = require('fs-extra');
 const path = require('path');
 const BABEL_RC = JSON.parse(
@@ -5,12 +6,15 @@ const BABEL_RC = JSON.parse(
 );
 
 module.exports = {
+  cache: true,
   context: path.resolve(process.cwd(), 'frontend'),
   devtool: 'source-map',
-  entry: [
-    'react-hot-loader/patch',
-    path.resolve(process.cwd(), 'frontend', 'entry'),
-  ],
+  entry: {
+    entry: [
+      'react-hot-loader/patch',
+      path.resolve(process.cwd(), 'frontend', 'entry'),
+    ],
+  },
   module: {
     rules: [{
       test: /\.js$/,
@@ -23,6 +27,8 @@ module.exports = {
     }],
   },
   output: {
+    filename: 'js/[name].js',
+    path: config.DIRECTORIES.DIST,
     publicPath: '/',
   },
 };
