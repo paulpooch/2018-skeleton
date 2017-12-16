@@ -1,4 +1,5 @@
 import React from 'react';
+import config from '../../config';
 
 const Index = () => (
   <html className="no-js" lang="en-us">
@@ -9,7 +10,7 @@ const Index = () => (
       <title>2018 Skeleton</title>
     </head>
     <body>
-      <div id="reactRoot" style={{ minHeight: '100vh' }} />
+      <div id={ config.REACT_ROOT_ELEMENT } style={{ minHeight: '100vh' }} />
     </body>
   </html>
 );
