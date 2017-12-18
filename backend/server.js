@@ -1,8 +1,12 @@
 const fs = require('fs-extra');
 const path = require('path');
+const dotenv = require('dotenv');
+const dbConfig = dotenv.parse(fs.readFileSync(path.resolve(process.cwd(), 'ops', 'database', '.env')));
+dotenv.config({ silent: true }); // Load process.env with contents of .env file.
 const BABEL_RC = JSON.parse(
   fs.readFileSync(path.resolve(process.cwd(), '.babelrc'), 'utf-8')
 );
+
 const babel = require('babel-register')(BABEL_RC);
 const config = require(path.resolve(process.cwd(), 'config'));
 const Express = require('express');
@@ -48,13 +52,14 @@ express.get('*', (req, res, next) => {
 });
 
 function runServer() {
-  server.listen(config.PORT, (error) => {
+  server.listen(process.env.PORT, (error) => {
     if (error) console.error(error);
+    console.info(`SERVER LISTENING ON http://localhost:${process.env.PORT}`);
   });
 }
 
 // See ops/database/.env
-const sequelize = new Sequelize('app_db', 'app_user', 'app_password', {
+const sequelize = new Sequelize(dbConfig.POSTGRES_DB, dbConfig.POSTGRES_USER, dbConfig.POSTGRES_PASSWORD, {
   host: 'localhost',
   dialect: 'postgres',
   pool: {

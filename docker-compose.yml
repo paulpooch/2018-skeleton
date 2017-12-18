@@ -7,8 +7,9 @@ services:
     env_file: .env
     environment:
       - NODE_ENV=production
+    env_file: .env
     ports:
-      - 8000:8000
+      - "${PORT}:${PORT}"
   database:
     build: ./ops/database
     container_name: 2018-skeleton-database
