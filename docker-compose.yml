@@ -13,6 +13,12 @@ services:
     build: ./ops/database
     container_name: 2018-skeleton-database
     image: 2018-skeleton-database:lastest
-    env_file: .env
+    env_file: ./.env
+    environment:
+     - POSTGRES_PASSWORD=app_password
+     - POSTGRES_USER=app_user
+     - POSTGRES_DB=app_db
     ports:
       - 5432:5432
+    user:
+      postgres

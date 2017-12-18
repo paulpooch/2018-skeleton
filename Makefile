@@ -6,7 +6,7 @@
 
 .PHONY: build
 build:
-	docker-compose up --build -d
+	docker-compose up --build --remove-orphans -d
 #	docker build --pull -t ${USERNAME}/${IMAGE_NAME_DB} -f backend/ops/database/Dockerfile .
 #	docker build --pull -t ${USERNAME}/${IMAGE_NAME_WEB} -f backend/ops/web-server/Dockerfile .
 
