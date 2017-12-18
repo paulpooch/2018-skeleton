@@ -53,7 +53,8 @@ function runServer() {
   });
 }
 
-const sequelize = new Sequelize('SKELETON_DB_DEV', 'test_user', 'test_password', {
+// See ops/database/.env
+const sequelize = new Sequelize('app_db', 'app_user', 'app_password', {
   host: 'localhost',
   dialect: 'postgres',
   pool: {
