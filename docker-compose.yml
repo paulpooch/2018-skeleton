@@ -1,0 +1,18 @@
+version: '3'
+services:
+  web:
+    build: .
+    container_name: 2018-skeleton-web
+    image: 2018-skeleton-web:latest
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+    ports:
+      - 8000:8000
+  database:
+    build: ./ops/database
+    container_name: 2018-skeleton-database
+    image: 2018-skeleton-database:lastest
+    env_file: .env
+    ports:
+      - 5432:5432

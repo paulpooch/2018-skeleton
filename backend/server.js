@@ -10,6 +10,7 @@ const http = require('http');
 const Index = require('./templates/Index').default;
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
+const Sequelize = require('sequelize');
 const webpack = require('webpack');
 const webpackConfig = require('../webpack.config');
 
@@ -51,3 +52,25 @@ function runServer() {
     if (error) console.error(error);
   });
 }
+
+const sequelize = new Sequelize('SKELETON_DB_DEV', 'test_user', 'test_password', {
+  host: 'localhost',
+  dialect: 'postgres',
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000
+  },
+  // http://docs.sequelizejs.com/manual/tutorial/querying.html#operators
+  operatorsAliases: false
+});
+
+sequelize
+.authenticate()
+.then(() => {
+  console.log('Connection has been established successfully.');
+})
+.catch(err => {
+  console.error('Unable to connect to the database:', err);
+});
