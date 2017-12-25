@@ -101,8 +101,3 @@ sequelize
   .catch(err => {
     console.error('Unable to connect to the database:', err);
   });
-
-const User = require('./models/User');
-User.sync();
-
-var user = User.create({ username: 'admin', password: 'admin' });
