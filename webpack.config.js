@@ -10,7 +10,11 @@ module.exports = {
   context: path.resolve(process.cwd(), 'frontend'),
   devtool: 'source-map',
   entry: {
-    entry: ['react-hot-loader/patch', path.resolve(process.cwd(), 'frontend', 'entry')],
+    entry: [
+      'react-hot-loader/patch',
+      'webpack-hot-middleware/client',
+      path.resolve(process.cwd(), 'frontend', 'entry'),
+    ],
   },
   module: {
     rules: [
@@ -26,7 +30,7 @@ module.exports = {
   output: {
     filename: 'js/[name].js',
     path: config.DIRECTORIES.DIST,
-    publicPath: '/',
+    publicPath: config.DIRECTORIES.PUBLIC_PATH,
   },
   plugins: [
     new webpack.DefinePlugin({

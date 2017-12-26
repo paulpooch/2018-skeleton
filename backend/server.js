@@ -11,9 +11,12 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const babel = require('babel-register')(BABEL_RC);
 const bodyParser = require('body-parser');
 const config = require(path.resolve(process.cwd(), 'config'));
+const devMiddleware = require('webpack-dev-middleware');
 const Express = require('express');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
+const helmet = require('helmet');
 const http = require('http');
+const hotMiddleware = require('webpack-hot-middleware');
 const Index = require('./templates/Index').default;
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
@@ -21,12 +24,11 @@ const Sequelize = require('sequelize');
 const webpack = require('webpack');
 const webpackConfig = require('../webpack.config');
 
-const express = new Express();
-const server = new http.Server(express);
+let webpackCompiler = null;
 
 try {
   fs.emptyDirSync(config.DIRECTORIES.DIST);
-  const webpackCompiler = webpack(webpackConfig);
+  webpackCompiler = webpack(webpackConfig);
   webpackCompiler.run((error, stats) => {
     if (error) {
       console.error(error);
@@ -47,32 +49,41 @@ try {
   throw error;
 }
 
-express.use('/dist', Express.static(config.DIRECTORIES.DIST));
-
-express.get('*', (req, res, next) => {
-  const props = {};
-  const index = React.createElement(Index, props);
-  const html = ReactDOMServer.renderToString(index);
-  res.send(`<!doctype html>${html}`);
-});
-
-express.use('/graphql', bodyParser.json(), (req, res, next) =>
-  graphqlExpress({
-    schema,
-    context: { user: req.user },
-  })(req, res, next),
-);
-
-if (IS_DEVELOPMENT) {
-  express.get(
-    '/graphiql',
-    graphiqlExpress({
-      endpointURL: '/graphql',
-    }),
-  );
-}
-
 function runServer() {
+  const express = new Express();
+  const server = new http.Server(express);
+  express.use(helmet());
+  if (IS_DEVELOPMENT) {
+    express.use(
+      devMiddleware(webpackCompiler, {
+        noInfo: true,
+        publicPath: config.DIRECTORIES.PUBLIC_PATH,
+        historyApiFallback: true,
+      }),
+    );
+    express.use(hotMiddleware(webpackCompiler));
+  }
+  express.use('/dist', Express.static(config.DIRECTORIES.DIST));
+  express.get('*', (req, res, next) => {
+    const props = {};
+    const index = React.createElement(Index, props);
+    const html = ReactDOMServer.renderToString(index);
+    res.send(`<!doctype html>${html}`);
+  });
+  express.use('/graphql', bodyParser.json(), (req, res, next) =>
+    graphqlExpress({
+      schema,
+      context: { user: req.user },
+    })(req, res, next),
+  );
+  if (IS_DEVELOPMENT) {
+    express.get(
+      '/graphiql',
+      graphiqlExpress({
+        endpointURL: '/graphql',
+      }),
+    );
+  }
   server.listen(process.env.PORT, error => {
     if (error) console.error(error);
     console.info(`SERVER LISTENING ON http://localhost:${process.env.PORT}`);

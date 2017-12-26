@@ -24,11 +24,7 @@ const store = createStore(reducer, preloadedState, enhancer);
 const Root = () => (
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <Switch>
-        {/* WARNING: This root component cannot be decorated with a HOC (@connect, etc).
-       Hot reloading will break. */}
-        <Route component={App} />
-      </Switch>
+      <App />
     </ConnectedRouter>
   </Provider>
 );

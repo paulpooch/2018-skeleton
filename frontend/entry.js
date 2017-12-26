@@ -23,6 +23,7 @@ render(Root);
 
 if (module.hot) {
   module.hot.accept('./Root', () => {
-    render(Root);
+    const UpdatedRoot = require('./Root').default;
+    render(UpdatedRoot);
   });
 }
