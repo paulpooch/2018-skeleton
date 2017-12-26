@@ -4,6 +4,19 @@ import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import Root from './Root';
 import config from '../config';
+import { applyMiddleware, createStore } from 'redux';
+import { Route, Switch } from 'react-router-dom';
+import createBrowserHistory from 'history/createBrowserHistory';
+
+const history = createBrowserHistory();
+const initialState = {};
+const middleware = [];
+function reducer(state = initialState, action) {
+  return state;
+}
+const preloadedState = initialState;
+const enhancer = applyMiddleware(...middleware);
+const store = createStore(reducer, preloadedState, enhancer);
 
 const render = Component => {
   if (ENVIRONMENT === 'production') {
@@ -13,7 +26,7 @@ const render = Component => {
 
   return ReactDOM.render(
     <AppContainer>
-      <Component />
+      <Component history={history} store={store} />
     </AppContainer>,
     document.getElementById(config.REACT_ROOT_ELEMENT),
   );
