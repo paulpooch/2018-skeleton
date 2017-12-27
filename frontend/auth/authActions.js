@@ -14,7 +14,7 @@ const registerEpic = action$ =>
     const body = { email, password };
     return Observable.ajax({
       method: 'POST',
-      url: '/api/auth',
+      url: '/auth',
       body: { email, password },
     }).map(response => registerFulfilled(response));
   });

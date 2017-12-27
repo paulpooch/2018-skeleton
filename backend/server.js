@@ -7,6 +7,7 @@ dotenv.config({ silent: true }); // Load process.env with contents of .env file.
 const BABEL_RC = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), '.babelrc'), 'utf-8'));
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const SESSION_SECRET = 'H6CeOtSpgJXFGun7Uoan';
 
 const babel = require('babel-register')(BABEL_RC);
 const bodyParser = require('body-parser');
@@ -18,9 +19,11 @@ const helmet = require('helmet');
 const http = require('http');
 const hotMiddleware = require('webpack-hot-middleware');
 const Index = require('./templates/Index').default;
+const passport = require('passport');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const Sequelize = require('sequelize');
+const session = require('express-session');
 const webpack = require('webpack');
 const webpackConfig = require('../webpack.config');
 
@@ -52,7 +55,19 @@ try {
 function runServer() {
   const express = new Express();
   const server = new http.Server(express);
+  express.use(bodyParser.urlencoded({ extended: true }));
+  express.use(bodyParser.json());
   express.use(helmet());
+  express.use(
+    session({
+      cookie: { path: '/', httpOnly: true, secure: false, maxAge: null },
+      secret: SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+    }),
+  );
+  express.use(passport.initialize());
+  express.use(passport.session());
   if (IS_DEVELOPMENT) {
     express.use(
       devMiddleware(webpackCompiler, {
