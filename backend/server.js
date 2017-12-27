@@ -9,6 +9,7 @@ const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const SESSION_SECRET = 'H6CeOtSpgJXFGun7Uoan';
 
+const authController = require('./controllers/authController');
 const babel = require('babel-register')(BABEL_RC);
 const bodyParser = require('body-parser');
 const config = require(path.resolve(process.cwd(), 'config'));
@@ -19,7 +20,6 @@ const helmet = require('helmet');
 const http = require('http');
 const hotMiddleware = require('webpack-hot-middleware');
 const Index = require('./templates/Index').default;
-const passport = require('passport');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const Sequelize = require('sequelize');
@@ -53,52 +53,53 @@ try {
 }
 
 function runServer() {
-  const express = new Express();
-  const server = new http.Server(express);
-  express.use(bodyParser.urlencoded({ extended: true }));
-  express.use(bodyParser.json());
-  express.use(helmet());
-  express.use(
+  const app = new Express();
+  const server = new http.Server(app);
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
+  app.use(helmet());
+  app.use(
     session({
-      cookie: { path: '/', httpOnly: true, secure: false, maxAge: null },
+      cookie: { path: '/', httpOnly: true, secure: IS_PRODUCTION, maxAge: null },
       secret: SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
     }),
   );
-  express.use(passport.initialize());
-  express.use(passport.session());
   if (IS_DEVELOPMENT) {
-    express.use(
+    app.use(
       devMiddleware(webpackCompiler, {
         noInfo: true,
         publicPath: config.DIRECTORIES.PUBLIC_PATH,
         historyApiFallback: true,
       }),
     );
-    express.use(hotMiddleware(webpackCompiler));
+    app.use(hotMiddleware(webpackCompiler));
   }
-  express.use('/dist', Express.static(config.DIRECTORIES.DIST));
-  express.get('*', (req, res, next) => {
+  app.use('/dist', Express.static(config.DIRECTORIES.DIST));
+  app.get('*', (req, res, next) => {
     const props = {};
     const index = React.createElement(Index, props);
     const html = ReactDOMServer.renderToString(index);
     res.send(`<!doctype html>${html}`);
   });
-  express.use('/graphql', bodyParser.json(), (req, res, next) =>
+  app.use('/graphql', bodyParser.json(), (req, res, next) =>
     graphqlExpress({
       schema,
       context: { user: req.user },
     })(req, res, next),
   );
   if (IS_DEVELOPMENT) {
-    express.get(
+    app.get(
       '/graphiql',
       graphiqlExpress({
         endpointURL: '/graphql',
       }),
     );
   }
+
+  app.post('/auth', authController.register);
+
   server.listen(process.env.PORT, error => {
     if (error) console.error(error);
     console.info(`SERVER LISTENING ON http://localhost:${process.env.PORT}`);
