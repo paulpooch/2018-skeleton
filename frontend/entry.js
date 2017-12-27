@@ -1,11 +1,9 @@
-/* global ENVIRONMENT */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import Root from './Root';
 import config from '../config';
-import { applyMiddleware, createStore } from 'redux';
-import { Route, Switch } from 'react-router-dom';
+import { applyMiddleware, compose, createStore } from 'redux';
 import createBrowserHistory from 'history/createBrowserHistory';
 import { rootEpic, rootReducer } from './rootActions';
 import { createEpicMiddleware } from 'redux-observable';
@@ -13,12 +11,14 @@ import { createEpicMiddleware } from 'redux-observable';
 const history = createBrowserHistory();
 const initialState = {};
 
-const preloadedState = initialState;
-const store = createStore(rootReducer, preloadedState, enhancer);
-
 const epicMiddleware = createEpicMiddleware(rootEpic);
 const middleware = [epicMiddleware];
-const enhancer = applyMiddleware(...middleware);
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const enhancers = composeEnhancers(applyMiddleware(...middleware));
+
+const preloadedState = initialState;
+const store = createStore(rootReducer, preloadedState, enhancers);
 
 const render = Component => {
   if (ENVIRONMENT === 'production') {

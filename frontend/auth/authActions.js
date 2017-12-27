@@ -1,4 +1,5 @@
 import rxPartial from '../rxPartial';
+import { combineEpics } from 'redux-observable';
 
 const REGISTER = 'auth/REGISTER';
 const REGISTER_FULFILLED = 'auth/REGISTER_FULFILLED';
@@ -14,11 +15,8 @@ const registerEpic = action$ =>
       method: 'POST',
       url: '/api/auth',
       body: { email, password },
-    })
-      .map(response => registerFulfilled(response));
+    }).map(response => registerFulfilled(response));
   });
-
-export const authEpic = action$ => action$.filter(action => action.type === 'FOO').mapTo({ type: null });
 
 export const reducer = (state = {}, action) => {
   switch (action.type) {
@@ -26,3 +24,7 @@ export const reducer = (state = {}, action) => {
       return state;
   }
 };
+
+export const epic = combineEpics(
+  registerEpic,
+);

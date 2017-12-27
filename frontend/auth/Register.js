@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { register } from './authActions';
 
+@connect((state, ownProps) => ({}), {
+  register,
+})
 export default class Register extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +25,8 @@ export default class Register extends Component {
     e.preventDefault();
     e.stopPropagation();
     console.log('submit', this.state);
+    const { email, password } = this.state;
+    this.props.register({ email, password });
   };
 
   render() {
