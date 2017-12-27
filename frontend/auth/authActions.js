@@ -1,17 +1,18 @@
-import rxPartial from '../rxPartial';
+import { Observable } from '../rxPartial';
 import { combineEpics } from 'redux-observable';
 
 const REGISTER = 'auth/REGISTER';
 const REGISTER_FULFILLED = 'auth/REGISTER_FULFILLED';
 
-export const register = ({ email, password }) => ({ type: REGISTER, email, password });
+export const register = ({ email, password }) => ({ type: REGISTER, payload: { email, password } });
 
 const registerFulfilled = payload => ({ type: REGISTER_FULFILLED, payload });
 
 const registerEpic = action$ =>
   action$.ofType(REGISTER).mergeMap(action => {
-    const body = { emai, password };
-    return ajax({
+    const { email, password } = action.payload;
+    const body = { email, password };
+    return Observable.ajax({
       method: 'POST',
       url: '/api/auth',
       body: { email, password },
@@ -25,6 +26,4 @@ export const reducer = (state = {}, action) => {
   }
 };
 
-export const epic = combineEpics(
-  registerEpic,
-);
+export const epic = combineEpics(registerEpic);
