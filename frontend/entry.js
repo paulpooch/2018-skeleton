@@ -7,16 +7,18 @@ import config from '../config';
 import { applyMiddleware, createStore } from 'redux';
 import { Route, Switch } from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory';
+import { rootEpic, rootReducer } from './rootActions';
+import { createEpicMiddleware } from 'redux-observable';
 
 const history = createBrowserHistory();
 const initialState = {};
-const middleware = [];
-function reducer(state = initialState, action) {
-  return state;
-}
+
 const preloadedState = initialState;
+const store = createStore(rootReducer, preloadedState, enhancer);
+
+const epicMiddleware = createEpicMiddleware(rootEpic);
+const middleware = [epicMiddleware];
 const enhancer = applyMiddleware(...middleware);
-const store = createStore(reducer, preloadedState, enhancer);
 
 const render = Component => {
   if (ENVIRONMENT === 'production') {

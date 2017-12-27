@@ -1,5 +1,6 @@
 {
   "presets": [
+    "babel-preset-react",
     [
       "babel-preset-env",
       {
@@ -7,8 +8,7 @@
           "browsers": ["last 2 versions"]
         }
       }
-    ],
-    "babel-preset-react"
+    ]
   ],
-  "plugins": ["react-hot-loader/babel", "babel-plugin-transform-decorators-legacy"]
+  "plugins": ["react-hot-loader/babel", "babel-plugin-transform-decorators-legacy", "babel-plugin-transform-class-properties"]
 }
