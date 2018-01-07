@@ -4,6 +4,8 @@ const path = require('path');
 dotenv.config({ silent: true }); // Load process.env with contents of .env file.
 
 const BABEL_RC = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), '.babelrc'), 'utf-8'));
+const BUILD_FLAG = '--build';
+const IS_PROD_BUILD = process.argv.slice(2)[0] === BUILD_FLAG;
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const SESSION_SECRET = 'H6CeOtSpgJXFGun7Uoan';
@@ -23,7 +25,7 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const session = require('express-session');
 const webpack = require('webpack');
-const webpackConfig = require('../webpack.config');
+const webpackConfig = IS_PRODUCTION ? require('../webpack.config.prod') : require('../webpack.config');
 
 // 1. Database /////////////////////////////////////////////////////////////////////////////////////////////////////////
 const db = require('./db');
@@ -31,31 +33,37 @@ const db = require('./db');
 // 2. Webpack build ////////////////////////////////////////////////////////////////////////////////////////////////////
 let webpackCompiler = null;
 
-try {
-  fs.emptyDirSync(config.DIRECTORIES.DIST);
-  webpackCompiler = webpack(webpackConfig);
-  webpackCompiler.run((error, stats) => {
-    if (error) {
-      console.error(error);
-      throw error;
-    } else {
-      console.info(
-        stats.toString({
-          chunks: false,
-          colors: true,
-          children: false,
-        }),
-      );
-      runServer();
-    }
-  });
-} catch (error) {
-  console.error(error);
-  throw error;
+function webpackBuild() {
+  try {
+    fs.emptyDirSync(config.DIRECTORIES.DIST);
+    webpackCompiler = webpack(webpackConfig);
+    webpackCompiler.run((error, stats) => {
+      if (error) {
+        console.error(error);
+        throw error;
+      } else {
+        console.info(
+          stats.toString({
+            chunks: false,
+            colors: true,
+            children: false,
+          }),
+        );
+        console.info('Build hash', stats.hash);
+        console.info('Build complete.')
+        if (!IS_PROD_BUILD) runServer();
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 // 3. Express server ///////////////////////////////////////////////////////////////////////////////////////////////////
 function runServer() {
+  const scripts = fs.readdirSync(path.resolve(config.DIRECTORIES.DIST, 'js')).filter(file => file.slice(-3) === '.js');
+
   const app = new Express();
   const server = new http.Server(app);
   app.use(bodyParser.urlencoded({ extended: true }));
@@ -100,7 +108,9 @@ function runServer() {
   app.get('/auth', authController.register);
 
   app.get('*', (req, res, next) => {
-    const props = {};
+    const props = {
+      scripts,
+    };
     const index = React.createElement(Index, props);
     const html = ReactDOMServer.renderToString(index);
     res.send(`<!doctype html>${html}`);
@@ -111,3 +121,8 @@ function runServer() {
     console.info(`SERVER LISTENING ON http://localhost:${process.env.PORT}`);
   });
 }
+
+// 4. Run //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+if (IS_DEVELOPMENT) webpackBuild();
+if (IS_PRODUCTION && IS_PROD_BUILD) webpackBuild();
+if (IS_PRODUCTION && !IS_PROD_BUILD) runServer();

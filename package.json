@@ -10,6 +10,8 @@
     "db-down": "docker-compose down",
     "db-up": "docker-compose up -d",
     "dev": "NODE_ENV=development node backend/server.js",
+    "prod-build": "NODE_ENV=production node backend/server.js --build",
+    "prod": "NODE_ENV=production node backend/server.js",
     "migrate": "cd backend && sequelize db:migrate",
     "migrate-down": "cd backend && sequelize db:migrate:undo"
   },

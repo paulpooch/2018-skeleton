@@ -23,7 +23,10 @@ const store = createStore(rootReducer, preloadedState, enhancers);
 const render = Component => {
   if (ENVIRONMENT === 'production') {
     // No hot loading in production.
-    return ReactDOM.render(<Component />, document.getElementById(config.REACT_ROOT_ELEMENT));
+    return ReactDOM.render(
+      <Component history={history} store={store} />,
+      document.getElementById(config.REACT_ROOT_ELEMENT),
+    );
   }
 
   return ReactDOM.render(

@@ -1,7 +1,7 @@
 import React from 'react';
 import config from '../../config';
 
-const Index = () => (
+const Index = ({ scripts }) => (
   <html className="no-js" lang="en-us">
     <head>
       <meta charSet="utf-8" />
@@ -10,8 +10,8 @@ const Index = () => (
       <title>2018 Skeleton</title>
     </head>
     <body>
-      <div id={ config.REACT_ROOT_ELEMENT } style={{ minHeight: '100vh' }} />
-      <script defer src="/dist/js/entry.js" charSet="UTF-8" />
+      <div id={config.REACT_ROOT_ELEMENT} style={{ minHeight: '100vh' }} />
+      {scripts.map(script => <script defer src={`/dist/js/${script}`} charSet="UTF-8" />)}
     </body>
   </html>
 );
