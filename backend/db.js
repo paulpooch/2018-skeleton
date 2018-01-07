@@ -21,6 +21,8 @@ const sequelize = new Sequelize(dbConfig.POSTGRES_DB, dbConfig.POSTGRES_USER, db
   operatorsAliases: false,
 });
 
+const BASENAME = 'index.js';
+
 sequelize
   .authenticate()
   .then(() => {
@@ -33,7 +35,7 @@ sequelize
 fs
   .readdirSync(config.DIRECTORIES.MODELS)
   .filter(file => {
-    return file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js';
+    return file.indexOf('.') !== 0 && file !== BASENAME && file.slice(-3) === '.js';
   })
   .forEach(file => {
     const model = sequelize['import'](path.join(config.DIRECTORIES.MODELS, file));

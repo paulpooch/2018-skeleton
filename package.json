@@ -9,7 +9,9 @@
   "scripts": {
     "db-down": "docker-compose down",
     "db-up": "docker-compose up -d",
-    "dev": "NODE_ENV=development node backend/server.js"
+    "dev": "NODE_ENV=development node backend/server.js",
+    "migrate": "cd backend && sequelize db:migrate",
+    "migrate-down": "cd backend && sequelize db:migrate:undo"
   },
   "dependencies": {
     "apollo-server-express": "^1.3.2",
