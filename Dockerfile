@@ -22,5 +22,3 @@ EXPOSE 8000
 ENV NODE_ENV production
 
 CMD ["yarn", "run", "dev"]
-
-

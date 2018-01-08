@@ -7,8 +7,8 @@
   "author": "Paul Pucciarelli <paul.pucciarelli@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "db-down": "docker-compose down",
-    "db-up": "docker-compose up -d",
+    "compose-down": "docker-compose down",
+    "compose-up": "docker-compose up -d",
     "dev": "NODE_ENV=development node backend/server.js",
     "prod-build": "NODE_ENV=production node backend/server.js --build",
     "prod": "NODE_ENV=production node backend/server.js",
@@ -25,6 +25,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "bcrypt": "^1.0.3",
+    "connect-memcached": "^0.2.0",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
