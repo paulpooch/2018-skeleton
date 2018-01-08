@@ -8,13 +8,12 @@ const BUILD_FLAG = '--build';
 const IS_PROD_BUILD = process.argv.slice(2)[0] === BUILD_FLAG;
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
-const MEMCACHED_SECRET = 'H6CeOtSpgJXFGun7Uoan';
 const SESSION_SECRET = 'H6CeOtSpgJXFGun7Uoan';
 
 const authController = require('./controllers/authController');
 const babel = require('babel-register')(BABEL_RC);
 const bodyParser = require('body-parser');
-const connectMemcached = require('connect-memcached');
+const connectRedis = require('connect-redis');
 const config = require(path.resolve(process.cwd(), 'config'));
 const devMiddleware = require('webpack-dev-middleware');
 const Express = require('express');
@@ -68,7 +67,7 @@ function runServer() {
 
   const app = new Express();
   const server = new http.Server(app);
-  const MemcachedStore = connectMemcached(session);
+  const RedisStore = connectRedis(session);
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
   app.use(helmet());
@@ -78,9 +77,9 @@ function runServer() {
       secret: SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
-      store: new MemcachedStore({
-        hosts: ['127.0.0.1:11211'],
-        secret: MEMCACHED_SECRET, // Optionally use transparent encryption for memcache session data
+      store: new RedisStore({
+        host: '127.0.0.1',
+        port: 6379,
       }),
     }),
   );

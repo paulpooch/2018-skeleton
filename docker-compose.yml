@@ -1,19 +1,19 @@
 version: '3'
 services:
-  web:
-    build: .
-    container_name: 2018-skeleton-web
-    image: 2018-skeleton-web:latest
-    env_file: .env
-    environment:
-      - NODE_ENV=production
-    env_file: .env
-    ports:
-      - "${PORT}:${PORT}"
+#  web:
+#    build: .
+#    container_name: 2018-skeleton-web
+#    image: 2018-skeleton-web:latest
+#    env_file: .env
+#    environment:
+#      - NODE_ENV=production
+#    env_file: .env
+#    ports:
+#      - "${PORT}:${PORT}"
   database:
     build: ./ops/database
     container_name: 2018-skeleton-database
-    image: 2018-skeleton-database:lastest
+    image: 2018-skeleton-database:latest
     env_file: ./ops/database/.env
     ports:
       - "5432:5432"
@@ -22,6 +22,6 @@ services:
   sessionStore:
     build: ./ops/sessionStore
     container_name: 2018-skeleton-session-store
-    image: 2018-skeleton-session-store:lastest
+    image: 2018-skeleton-session-store:latest
     ports:
-      - "11211:11211"
+      - "6379:6379"

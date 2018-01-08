@@ -1,2 +1,2 @@
-FROM memcached:latest
-CMD ["memcached", "--name", "my-memcache"]
+FROM redis:latest
+CMD ["redis", "--name", "redis-session-store"]

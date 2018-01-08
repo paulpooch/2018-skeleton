@@ -11,7 +11,7 @@ const Index = ({ scripts }) => (
     </head>
     <body>
       <div id={config.REACT_ROOT_ELEMENT} style={{ minHeight: '100vh' }} />
-      {scripts.map(script => <script defer src={`/dist/js/${script}`} charSet="UTF-8" />)}
+      {scripts.map(script => <script defer key={script} src={`/dist/js/${script}`} charSet="UTF-8" />)}
     </body>
   </html>
 );
