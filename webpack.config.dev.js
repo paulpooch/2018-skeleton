@@ -25,6 +25,22 @@ module.exports = {
         loader: 'babel-loader',
         query: Object.assign({}, BABEL_RC, { cacheDirectory: true }),
       },
+      {
+        test: /\.s?p?css$/,
+        loaders: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              root: '/',
+              importLoaders: 1,
+              localIdentName: '[path][name]-[local]-[hash:base64:5]',
+              modules: true,
+            },
+          },
+          'postcss-loader',
+        ],
+      },
     ],
   },
   output: {

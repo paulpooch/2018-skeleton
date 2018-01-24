@@ -30,8 +30,9 @@ export default class Register extends Component {
   };
 
   render() {
+    const css = require('./Register.pcss');
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form className={css.el} onSubmit={this.handleSubmit}>
         <h1>Register</h1>
         <input type="email" name="email" onChange={this.handleFieldChange} />
         <input type="password" name="password" onChange={this.handleFieldChange} />

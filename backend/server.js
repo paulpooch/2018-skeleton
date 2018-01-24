@@ -26,7 +26,7 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const session = require('express-session');
 const webpack = require('webpack');
-const webpackConfig = IS_PRODUCTION ? require('../webpack.config.prod') : require('../webpack.config');
+const webpackConfig = IS_PRODUCTION ? require('../webpack.config.prod') : require('../webpack.config.dev');
 
 // 1. Database /////////////////////////////////////////////////////////////////////////////////////////////////////////
 const db = require('./db');
@@ -64,6 +64,7 @@ function webpackBuild() {
 // 3. Express server ///////////////////////////////////////////////////////////////////////////////////////////////////
 function runServer() {
   const scripts = fs.readdirSync(path.resolve(config.DIRECTORIES.DIST, 'js')).filter(file => file.slice(-3) === '.js');
+  const styles = IS_PRODUCTION ? fs.readdirSync(path.resolve(config.DIRECTORIES.DIST, 'css')).filter(file => file.slice(-4) === '.css') : [];
 
   const app = new Express();
   const server = new http.Server(app);
@@ -116,6 +117,7 @@ function runServer() {
   app.get('*', (req, res, next) => {
     const props = {
       scripts,
+      styles,
     };
     const index = React.createElement(Index, props);
     const html = ReactDOMServer.renderToString(index);

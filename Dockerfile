@@ -10,7 +10,8 @@ ENV PATH /usr/src/app/node_modules/.bin:$PATH
 COPY .babelrc .
 COPY config.js .
 COPY package.json .
-COPY webpack.config.js .
+COPY webpack.config.prod.js .
+COPY webpack.config.dev.js .
 COPY yarn.lock .
 
 COPY frontend frontend
@@ -21,4 +22,5 @@ RUN yarn --pure-lockfile && yarn cache clean
 EXPOSE 8000
 ENV NODE_ENV production
 
-CMD ["yarn", "run", "dev"]
+RUN yarn run prod-build
+CMD ["yarn", "run", "prod"]

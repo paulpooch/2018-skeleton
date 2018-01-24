@@ -2,6 +2,8 @@ import React from 'react';
 import { Link, Route, Switch } from 'react-router-dom';
 import Register from './auth/Register';
 
+const css = require('./App.pcss');
+
 const App = () => (
   <div>
     <Link to="/register">Register</Link>
