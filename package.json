@@ -7,11 +7,11 @@
   "author": "Paul Pucciarelli <paul.pucciarelli@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "compose": "docker-compose up -d",
     "compose-down": "docker-compose down",
-    "compose-up": "docker-compose up -d",
     "dev": "NODE_ENV=development node backend/server.js",
-    "prod-build": "NODE_ENV=production node backend/server.js --build",
     "prod": "NODE_ENV=production node backend/server.js",
+    "prod-build": "NODE_ENV=production node backend/server.js --build",
     "migrate": "cd backend && sequelize db:migrate",
     "migrate-down": "cd backend && sequelize db:migrate:undo"
   },
@@ -31,7 +31,7 @@
     "express-session": "^1.15.6",
     "fs-extra": "^5.0.0",
     "graphql": "^0.12.3",
-    "helmet": "^3.9.0",
+    "helmet": "^3.10.0",
     "pg": "6",
     "pg-hstore": "^2.3.2",
     "react": "^16.2.0",
@@ -42,14 +42,14 @@
     "redux": "^3.7.2",
     "redux-observable": "^0.17.0",
     "rxjs": "^5.5.6",
-    "sequelize": "^4.28.6"
+    "sequelize": "^4.32.1"
   },
   "devDependencies": {
-    "prettier": "^1.9.2",
+    "prettier": "^1.10.2",
     "react-hot-loader": "^3.1.3",
     "sequelize-cli": "^3.2.0",
     "webpack": "^3.10.0",
-    "webpack-dev-middleware": "^2.0.3",
+    "webpack-dev-middleware": "^2.0.4",
     "webpack-hot-middleware": "^2.21.0"
   }
 }
