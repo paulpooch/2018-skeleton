@@ -18,6 +18,7 @@ const config = require(path.resolve(process.cwd(), 'config'));
 const devMiddleware = require('webpack-dev-middleware');
 const Express = require('express');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
+const { makeExecutableSchema } = require('graphql-tools');
 const helmet = require('helmet');
 const http = require('http');
 const hotMiddleware = require('webpack-hot-middleware');
@@ -64,7 +65,9 @@ function webpackBuild() {
 // 3. Express server ///////////////////////////////////////////////////////////////////////////////////////////////////
 function runServer() {
   const scripts = fs.readdirSync(path.resolve(config.DIRECTORIES.DIST, 'js')).filter(file => file.slice(-3) === '.js');
-  const styles = IS_PRODUCTION ? fs.readdirSync(path.resolve(config.DIRECTORIES.DIST, 'css')).filter(file => file.slice(-4) === '.css') : [];
+  const styles = IS_PRODUCTION
+    ? fs.readdirSync(path.resolve(config.DIRECTORIES.DIST, 'css')).filter(file => file.slice(-4) === '.css')
+    : [];
 
   const app = new Express();
   const server = new http.Server(app);
@@ -96,12 +99,36 @@ function runServer() {
   }
   app.use('/dist', Express.static(config.DIRECTORIES.DIST));
 
-  app.use('/graphql', bodyParser.json(), (req, res, next) =>
-    graphqlExpress({
-      schema,
-      context: { user: req.user },
-    })(req, res, next),
-  );
+  // Some fake data
+  const books = [
+    {
+      title: "Harry Potter and the Sorcerer's stone",
+      author: 'J.K. Rowling',
+    },
+    {
+      title: 'Jurassic Park',
+      author: 'Michael Crichton',
+    },
+  ];
+
+  // The GraphQL schema in string form
+  const typeDefs = `
+    type Query { books: [Book] }
+    type Book { title: String, author: String }
+  `;
+
+  // The resolvers
+  const resolvers = {
+    Query: { books: () => books },
+  };
+
+  // Put together a schema
+  const schema = makeExecutableSchema({
+    typeDefs,
+    resolvers,
+  });
+
+  app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
   if (IS_DEVELOPMENT) {
     app.get(
       '/graphiql',
