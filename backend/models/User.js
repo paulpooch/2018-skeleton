@@ -3,6 +3,12 @@ const { v4 } = require('uuid');
 const Sequelize = require('sequelize');
 const DataTypes = Sequelize.DataTypes;
 
+function cryptPassword(password) {
+  const salt = bcrypt.genSaltSync();
+  const hashedPassword = bcrypt.hashSync(password, salt);
+  return hashedPassword;
+}
+
 const SCHEMA = {
   id: {
     allowNull: false,
@@ -35,7 +41,7 @@ const SCHEMA = {
   },
 };
 
-module.exports = (sequelize, DataTypes) => {
+const model = (sequelize, DataTypes) => {
   const User = sequelize.define('User', SCHEMA, {
     hooks: {
       beforeCreate(user) {
@@ -58,10 +64,22 @@ module.exports = (sequelize, DataTypes) => {
   return User;
 };
 
-module.exports.SCHEMA = SCHEMA;
+const gqlType = new GraphQLObjectType({
+  name: 'user',
+  fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+    email: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+  }),
+});
 
-function cryptPassword(password) {
-  const salt = bcrypt.genSaltSync();
-  const hashedPassword = bcrypt.hashSync(password, salt);
-  return hashedPassword;
-}
+module.exports = {
+  gqlType,
+  model,
+  SCHEMA,
+};
+
+module.exports.SCHEMA = SCHEMA;
