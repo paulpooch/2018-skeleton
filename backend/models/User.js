@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const { v4 } = require('uuid');
-const Sequelize = require('sequelize');
-const DataTypes = Sequelize.DataTypes;
+const { DataTypes } = require('sequelize');
+const { GraphQLObjectType } = require('graphql');
 
 function cryptPassword(password) {
   const salt = bcrypt.genSaltSync();
@@ -77,6 +77,7 @@ const gqlType = new GraphQLObjectType({
 });
 
 module.exports = {
+  default: model,
   gqlType,
   model,
   SCHEMA,

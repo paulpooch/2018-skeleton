@@ -7,6 +7,7 @@ const webpack = require('webpack');
 const BABEL_RC = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), '.babelrc'), 'utf-8'));
 
 module.exports = {
+  mode: 'production',
   cache: true,
   context: path.resolve(process.cwd(), 'frontend'),
   devtool: false,
@@ -15,8 +16,6 @@ module.exports = {
   },
   module: {
     rules: [
-
-
       {
         test: /\.js$/,
         exclude: /node_modules/,

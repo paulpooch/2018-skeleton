@@ -6,6 +6,7 @@ const webpack = require('webpack');
 const BABEL_RC = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), '.babelrc'), 'utf-8'));
 
 module.exports = {
+  mode: 'development',
   cache: true,
   context: path.resolve(process.cwd(), 'frontend'),
   devtool: 'source-map',
