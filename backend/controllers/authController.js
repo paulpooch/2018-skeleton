@@ -9,7 +9,7 @@ async function register(req, res, next) {
         email,
       },
     });
-    console.log({ existingUser });
+
     if (existingUser) {
       throw new Error('Email is already registered.');
     }
@@ -20,8 +20,9 @@ async function register(req, res, next) {
     });
     res.send(user);
   } catch (error) {
-    console.error(error);
-    res.status(500).send(error);
+    res.status(500).send({
+      error: error.message,
+    });
   }
 }
 

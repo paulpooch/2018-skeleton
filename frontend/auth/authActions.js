@@ -2,6 +2,7 @@ import { Observable } from '../rxPartial';
 import { combineEpics } from 'redux-observable';
 
 const REGISTER = 'auth/REGISTER';
+const REGISTER_FAILED = 'auth/REGISTER_FAILED';
 const REGISTER_FULFILLED = 'auth/REGISTER_FULFILLED';
 
 export const register = ({ email, password }) => ({ type: REGISTER, payload: { email, password } });
@@ -16,7 +17,13 @@ const registerEpic = action$ =>
       method: 'POST',
       url: '/auth',
       body: { email, password },
-    }).map(response => registerFulfilled(response));
+    })
+    .map(response => registerFulfilled(response))
+    .catch(error => Observable.of({
+      type: REGISTER_FAILED,
+      payload: error.xhr.response,
+      error: true
+    }));
   });
 
 export const reducer = (state = {}, action) => {
